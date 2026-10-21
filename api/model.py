@@ -5,10 +5,25 @@ predict() de src/predict.py, qui charge models/sentiment.joblib une seule fois.
 """
 import sys
 from pathlib import Path
+from typing import TypedDict
+
+from api.schemas import Label
 
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
-from predict import MODELE, charger_modele, predict as _predict  # noqa: E402  (fonctions du TP2)
+from predict import charger_modele  # noqa: E402  (fonctions du TP2)
+from predict import predict as _predict  # noqa: E402
+
+# Choisi sur la courbe du seuil (python src/courbe_seuil.py) : voir docs/semaine4.md, partie 3
+SEUIL_ABSTENTION = 0.60
+# Étiquettes du modèle -> étiquettes du contrat : une correspondance explicite, vérifiée au démarrage
+CORRESPONDANCE: dict[str, Label] = {"positive": "POSITIVE", "negative": "NEGATIVE"}
+
+
+class Prediction(TypedDict):
+    label: Label
+    score: float
+    text: str
 
 
 class SentimentClassifier:
@@ -17,12 +32,16 @@ class SentimentClassifier:
     model_name = "tfidf-logreg (TP2, models/sentiment.joblib)"
 
     def __init__(self) -> None:
-        charger_modele()  # échoue immédiatement si le joblib manque : on ne démarre pas sans modèle
+        modele = charger_modele()  # FileNotFoundError si le joblib manque : on ne démarre pas
+        inconnues = {str(c) for c in modele.classes_} - set(CORRESPONDANCE)
+        if inconnues:  # un modèle réentraîné sur d'autres étiquettes casserait le contrat
+            raise ValueError(f"classes inconnues du contrat : {sorted(inconnues)}")
 
-    def predict(self, text: str) -> dict:
-        """Renvoie {'label': 'POSITIVE'|'NEGATIVE', 'score': float, 'text': aperçu}."""
-        r = _predict(text)  # lève ValueError si le texte est vide
-        return {"label": r["label"].upper(), "score": r["score"], "text": text[:100]}
+    def predict(self, text: str) -> Prediction:
+        """Renvoie l'étiquette du contrat, ou INDETERMINE quand le modèle hésite."""
+        r = _predict(text)
+        label: Label = "INDETERMINE" if r["score"] < SEUIL_ABSTENTION else CORRESPONDANCE[r["label"]]
+        return {"label": label, "score": r["score"], "text": text[:100]}
 
 
 def load_model() -> SentimentClassifier:

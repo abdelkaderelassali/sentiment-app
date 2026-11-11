@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Diagnostic de l'environnement du TP1.
+"""Diagnostic de l'environnement de l'atelier 0.
 
 Usage : python scripts/check_setup.py
 Affiche une ligne par vérification (OK / ATTENTION / ERREUR) et un code de sortie
@@ -128,7 +128,7 @@ def check_cadrage() -> None:
 
 
 def main() -> int:
-    print(f"Diagnostic TP1 dans {ROOT}\n")
+    print(f"Diagnostic de l'atelier 0 dans {ROOT}\n")
     check_python()
     check_packages()
     check_structure()

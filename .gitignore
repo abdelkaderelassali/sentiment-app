@@ -12,6 +12,7 @@ build/
 # Artefacts lourds (DVC et MLflow à partir de la semaine 7)
 models/*
 !models/.gitkeep
+!models/metrics.json
 data/*
 !data/.gitkeep
 !data/sample_reviews.csv
@@ -30,3 +31,16 @@ Thumbs.db
 .pytest_cache/
 .coverage
 htmlcov/
+
+# TP4
+.hypothesis/
+.mypy_cache/
+.ruff_cache/
+!data/jeu_or.csv
+
+# TP5
+!data/avis_exemple.csv
+
+# TP 4 : le modèle est copié dans le paquet au moment de construire, jamais commité
+src/sentiment_app/modele/*.joblib
+docs/livrable-tp4.txt

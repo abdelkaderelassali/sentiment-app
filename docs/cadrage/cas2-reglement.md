@@ -4,11 +4,11 @@
 
 ## Besoin en une phrase (obligatoire)
 
-Permettre aux élèves et aux parents de poser des questions en langage naturel sur le règlement intérieur de l'école et recevoir une réponse précise extraite du document officiel.
+Répondre aux questions des étudiants sur le règlement intérieur en citant l'article exact sur lequel la réponse s'appuie.
 
 ## Utilisateur final (obligatoire)
 
-Les élèves, leurs parents et les enseignants qui souhaitent consulter rapidement une règle spécifique sans parcourir l'intégralité du document PDF du règlement intérieur.
+Les étudiants, qui obtiennent une réponse immédiate à toute heure, et le secrétariat, qui traite aujourd'hui les mêmes questions une par une par courriel.
 
 ## Approche retenue (obligatoire)
 
@@ -21,24 +21,24 @@ Cocher une seule case :
 
 ## Justification (obligatoire, citer au moins deux critères de la grille : (a) données étiquetées, (b) vérifiabilité, (c) coût par requête, (d) conséquence d'une erreur)
 
-(b) La réponse doit être directement vérifiable dans le document officiel du règlement : le RAG ancre chaque réponse dans un passage précis, ce qui permet à l'utilisateur de consulter la source. (a) Aucune donnée étiquetée question-réponse n'est disponible, ce qui écarte le machine learning supervisé ; le RAG n'en nécessite pas car il indexe directement le document existant.
+(b) La réponse doit être vérifiable : chaque réponse affiche l'article et la page du règlement, ce qu'aucun modèle génératif seul ne garantit. (a) Aucune base de questions étiquetées n'existe, ce qui écarte l'apprentissage supervisé. (c) Quelques dizaines de questions par jour seulement, donc le coût par appel d'un modèle de langage reste acceptable.
 
 ## Données nécessaires et leur origine (obligatoire)
 
-Le document PDF du règlement intérieur de l'école, converti en texte et découpé en passages indexables ; mis à jour à chaque révision annuelle du règlement par l'administration.
+Le règlement intérieur en PDF et les notes de service publiées par la direction, documents publics de l'école, découpés en passages et indexés. Les textes sont mis à jour une fois par an, l'index est reconstruit à chaque révision.
 
 ## Métrique de succès et seuil d'acceptation (obligatoire)
 
-Précision des réponses évaluée par un panel d'enseignants : au moins 90 % des réponses doivent citer un passage exact du règlement, avec un score RAGAS de fidélité ≥ 0,85.
+Part de réponses correctes accompagnées de la citation exacte, mesurée sur un jeu de 20 questions réelles fournies par le secrétariat. Acceptation à partir de 0,90, et zéro réponse citant un article qui n'existe pas.
 
 ## Conséquence d'une erreur et validation humaine prévue (obligatoire)
 
-Une réponse incorrecte sur une règle de discipline peut créer un conflit ; chaque réponse affiche le passage source pour que l'utilisateur vérifie lui-même, et le conseiller principal d'éducation reste l'arbitre final.
+Une réponse fausse induit l'étudiant en erreur sur ses droits ou ses obligations. L'interface affiche donc toujours l'extrait cité pour qu'il puisse vérifier lui-même, et rappelle que le secrétariat reste l'interlocuteur en cas de doute.
 
 ## Risques éthiques ou de confidentialité (obligatoire)
 
-Le règlement intérieur est un document public : le risque de confidentialité est faible. Il faut cependant éviter que le modèle génère des interprétations non présentes dans le texte officiel, d'où l'obligation de citer la source à chaque réponse.
+Les questions posées peuvent contenir un nom, un numéro d'étudiant ou une situation personnelle : aucune question n'est conservée après la réponse, et seuls les documents officiels entrent dans l'index.
 
 ## Approche écartée et pourquoi (facultatif)
 
-Modèle génératif seul : sans ancrage dans le document, le modèle peut inventer des règles inexistantes (hallucination), ce qui est inacceptable dans un contexte réglementaire scolaire.
+Le modèle génératif seul : il produirait des réponses plausibles mais inventerait des numéros d'articles, ce qui est exactement le risque que (b) nous demande d'éliminer.

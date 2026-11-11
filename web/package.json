@@ -1,0 +1,6 @@
+{
+  "type": "module",
+  "private": true,
+  "description": "Client web de l API /v1 (TP 2) : aucune dépendance",
+  "scripts": { "test": "node --test client.test.mjs" }
+}

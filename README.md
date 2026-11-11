@@ -71,5 +71,5 @@ sentiment-app/
 
 | Rôle | Nom | Identifiant GitHub | Travail de la semaine 1 |
 | --- | --- | --- | --- |
-| Membre A | Sellag Aymen | [@Aymenslg](https://github.com/Aymenslg) | Initialisation du dépôt, structure, premier push |
-| Membre B | ELASSALI Abdelkader | [@Abdelkaderelassali](https://github.com/Abdelkaderelassali) | Fiches de cadrage, environnement, vérification |
+| Membre A | [larhliñi-ia] | [@larhlimi-ia] | |
+| Membre B | [larhlimi | [@larhlimi] | |

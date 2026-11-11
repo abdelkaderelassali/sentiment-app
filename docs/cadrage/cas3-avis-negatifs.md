@@ -4,11 +4,11 @@
 
 ## Besoin en une phrase (obligatoire)
 
-Classer automatiquement les avis clients d'un site e-commerce afin de remonter en priorité les avis négatifs vers l'équipe service client pour traitement rapide.
+Classer automatiquement les avis clients en positifs et négatifs pour faire remonter les négatifs en tête de la file de traitement.
 
 ## Utilisateur final (obligatoire)
 
-Les agents du service client qui traitent une file d'avis déjà priorisée, et les responsables qualité qui suivent l'évolution du sentiment client au fil du temps.
+L'équipe relation client, qui répond d'abord aux clients mécontents au lieu de lire les avis dans leur ordre d'arrivée.
 
 ## Approche retenue (obligatoire)
 
@@ -21,24 +21,24 @@ Cocher une seule case :
 
 ## Justification (obligatoire, citer au moins deux critères de la grille : (a) données étiquetées, (b) vérifiabilité, (c) coût par requête, (d) conséquence d'une erreur)
 
-(a) Le site dispose de milliers d'avis historiques déjà étiquetés avec leur note étoiles, qui servent de supervision directe pour entraîner un classifieur de sentiment. (c) Le volume d'avis est très élevé (plusieurs milliers par jour) : un classifieur léger comme une régression logistique sur TF-IDF coûte quelques microsecondes par avis, là où un LLM serait prohibitif à cette échelle.
+(a) Les avis s'étiquettent à très faible coût à partir de la note en étoiles déjà saisie par le client. (c) Plusieurs milliers d'avis arrivent chaque jour : un classifieur coûte une fraction de milliseconde par avis, là où un appel à un modèle de langage se paierait à chaque fois. (d) Un avis mal classé est simplement traité plus tard, et l'agent le requalifie d'un clic.
 
 ## Données nécessaires et leur origine (obligatoire)
 
-Les avis textuels clients et leurs notes (1 à 5 étoiles) exportés depuis la base de données du site e-commerce ; les notes servent d'étiquettes proxy (1-2 étoiles = négatif, 4-5 = positif) pour l'entraînement.
+Un jeu public d'avis en français avec leur note pour l'entraînement, et un export anonymisé des avis du site pour l'évaluation. Les avis sont séparés en jeux d'entraînement, de validation et de test avant tout travail de modélisation.
 
 ## Métrique de succès et seuil d'acceptation (obligatoire)
 
-F1 macro sur un jeu de test tenu à l'écart, avec un seuil d'acceptation à 0,85 ; le rappel sur la classe négative doit atteindre au moins 0,90 pour s'assurer qu'aucun avis insatisfait majeur n'est manqué.
+Rappel sur la classe négative, mesuré sur un jeu de test tenu à l'écart : acceptation à partir de 0,90. Le rappel prime sur la précision, car manquer un client mécontent coûte plus cher que relire un avis positif.
 
 ## Conséquence d'une erreur et validation humaine prévue (obligatoire)
 
-Un avis négatif classé positif retarde la réponse du service client et dégrade la satisfaction ; un agent révise les avis en bas de liste chaque semaine pour détecter les erreurs systématiques et alimenter un jeu de réentraînement.
+Un avis négatif classé positif retarde la réponse de quelques heures, sans conséquence irréversible. L'agent peut requalifier n'importe quel avis, et chaque requalification alimente le jeu de réentraînement.
 
 ## Risques éthiques ou de confidentialité (obligatoire)
 
-Les avis peuvent contenir des informations personnelles (prénom, adresse) : anonymisation avant stockage d'entraînement. Il faut aussi veiller à ce que le modèle ne développe pas de biais envers certains profils de rédaction (langue, niveau de langue).
+Les avis peuvent citer un nom, un numéro de commande ou une adresse : anonymisation avant stockage. Il faut aussi surveiller le biais entre avis courts et avis détaillés, les premiers étant plus souvent mal classés.
 
 ## Approche écartée et pourquoi (facultatif)
 
-Règles métier par mots-clés : une liste de mots négatifs atteint environ 65 % de précision car les avis ironiques ou nuancés sont mal classés ; le machine learning capture mieux le contexte sémantique.
+Les règles par mots-clés : testées en interne, elles plafonnent autour de 60 pour cent d'exactitude parce que la négation et l'ironie leur échappent (« rien à redire » est compté comme négatif).

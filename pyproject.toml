@@ -1,0 +1,52 @@
+# Configuration du paquet (TP 4) et des outils de qualité.
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sentiment-app"
+version = "1.0.0"
+description = "Classifieur de sentiment d'avis clients en français"
+readme = "README-PAQUET.md"
+requires-python = ">=3.11"
+authors = [{ name = "Binôme sentiment-app" }]
+dependencies = [
+    "scikit-learn==1.5.*",   # le modèle sérialisé dépend de cette version : on la fige
+    "joblib>=1.4",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.scripts]
+sentiment = "sentiment_app.cli:main"   # la commande créée à l'installation
+
+[tool.setuptools.packages.find]
+where = ["src"]                        # seul src/sentiment_app/ est un paquet : train.py et predict.py restent des scripts
+
+[tool.setuptools.package-data]
+sentiment_app = ["modele/*.joblib"]    # le modèle voyage dans la roue
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+extend-exclude = ["notebooks"]
+
+[tool.ruff.lint]
+# E4, E7, E9, F : erreurs probables ; I : ordre des imports ; B : constructions à risque
+select = ["E4", "E7", "E9", "F", "I", "B"]
+
+[tool.mypy]
+python_version = "3.11"
+mypy_path = "src"            # pour que mypy trouve predict.py, importé par api/model.py
+check_untyped_defs = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = ["joblib", "joblib.*", "sklearn", "sklearn.*", "pandas", "pandas.*", "uvicorn", "uvicorn.*"]
+ignore_missing_imports = true
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true

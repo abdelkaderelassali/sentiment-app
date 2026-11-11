@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analyse d'avis clients</title>
+<style>
+  :root { --fond:#f6f7f9; --carte:#fff; --texte:#1d2430; --doux:#5f6b7a; --bleu:#1f4e79;
+          --vert:#2e7d32; --rouge:#b5452a; --ambre:#9a6700; --bord:#d9dee5; }
+  @media (prefers-color-scheme: dark) {
+    :root { --fond:#14181f; --carte:#1d232c; --texte:#e7ebf0; --doux:#9aa6b4; --bleu:#7fb0e0;
+            --vert:#6cc070; --rouge:#e58a70; --ambre:#e0b44c; --bord:#323b47; } }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, sans-serif; background:var(--fond); color:var(--texte); }
+  main { max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+  h1 { color: var(--bleu); font-size: 1.5rem; margin-bottom: .25rem; }
+  p.sous-titre { color: var(--doux); margin-top: 0; }
+  .carte { background: var(--carte); border: 1px solid var(--bord); border-radius: 10px; padding: 1.2rem; }
+  label { display:block; font-weight: 600; margin: .8rem 0 .3rem; }
+  input, textarea { width:100%; padding:.6rem; border:1px solid var(--bord); border-radius:6px;
+                    background:var(--fond); color:var(--texte); font: inherit; }
+  textarea { min-height: 7rem; resize: vertical; }
+  .ligne { display:flex; gap:.8rem; }
+  .ligne > div { flex:1; }
+  button { margin-top: 1rem; background: var(--bleu); color: #fff; border: 0; border-radius: 6px;
+           padding: .65rem 1.3rem; font: inherit; font-weight: 600; cursor: pointer; }
+  button:disabled { opacity: .6; cursor: wait; }
+  #resultat { margin-top: 1.2rem; padding: 1rem; border-radius: 8px; border-left: 5px solid var(--doux);
+              background: var(--carte); border: 1px solid var(--bord); display: none; }
+  #resultat.positif { border-left: 5px solid var(--vert); }
+  #resultat.negatif { border-left: 5px solid var(--rouge); }
+  #resultat.indetermine { border-left: 5px solid var(--ambre); }
+  #resultat.erreur { border-left: 5px solid var(--rouge); color: var(--rouge); }
+  .jauge { height: 8px; background: var(--bord); border-radius: 4px; margin-top: .5rem; overflow: hidden; }
+  .jauge > span { display:block; height:100%; background: var(--bleu); }
+  small { color: var(--doux); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Analyse d'avis clients</h1>
+  <p class="sous-titre">Client web de l'API <code>/v1</code> du cours : la page n'a pas de modèle, elle appelle l'API.</p>
+  <div class="carte">
+    <div class="ligne">
+      <div><label for="url">Adresse de l'API</label><input id="url" value="http://127.0.0.1:8000"></div>
+      <div><label for="cle">Clé d'API</label><input id="cle" type="password" autocomplete="off"></div>
+    </div>
+    <label for="texte">Avis à analyser</label>
+    <textarea id="texte" maxlength="2000" placeholder="Livraison rapide, produit conforme, très satisfait"></textarea>
+    <button id="analyser">Analyser</button>
+    <div id="resultat" role="status" aria-live="polite"></div>
+    <p><small>La clé reste dans cette page : elle n'est ni enregistrée ni envoyée ailleurs qu'à l'API.</small></p>
+  </div>
+</main>
+<script type="module">
+  import { analyser } from "./client.js";
+  const $ = (id) => document.getElementById(id);
+  const zone = $("resultat");
+
+  $("analyser").addEventListener("click", async () => {
+    $("analyser").disabled = true;
+    const r = await analyser($("url").value, $("cle").value, $("texte").value);
+    $("analyser").disabled = false;
+    zone.style.display = "block";
+    zone.className = r.ok ? r.classe : "erreur";
+    zone.replaceChildren();  // jamais innerHTML avec une donnée reçue : pas d'injection de code dans la page
+    if (r.ok) {
+      const titre = document.createElement("strong");
+      titre.textContent = r.titre;
+      const confiance = document.createElement("div");
+      confiance.textContent = `Confiance : ${Math.round(r.score * 100)} %`;
+      const jauge = document.createElement("div");
+      jauge.className = "jauge";
+      const barre = document.createElement("span");
+      barre.style.width = `${Math.round(r.score * 100)}%`;
+      jauge.append(barre);
+      zone.append(titre, confiance, jauge);
+    } else {
+      zone.textContent = r.message;
+    }
+  });
+</script>
+</body>
+</html>

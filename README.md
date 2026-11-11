@@ -69,7 +69,7 @@ sentiment-app/
 
 ## Membres du binôme
 
-| Rôle | Nom | Identifiant GitHub | Travail de la semaine 1 |
+| Rôle | Nom | Identifiant GitHub | Travail |
 | --- | --- | --- | --- |
-| Membre A | [larhliñi-ia] | [@larhlimi-ia] | |
-| Membre B | [larhlimi | [@larhlimi] | |
+| Membre A | ELASSALI Abdelkader | [@abdelkaderelassali](https://github.com/abdelkaderelassali) | Cadrage, tests et qualité, empaquetage |
+| Membre B | AYMEN SLG | [@Aymenslg](https://github.com/Aymenslg) | Architecture, API et interface |
